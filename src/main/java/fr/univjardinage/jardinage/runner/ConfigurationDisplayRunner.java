@@ -18,6 +18,6 @@ import org.springframework.stereotype.Component;
 log.info("[ORDRE 2] Affichage de la configuration");
 log.info("Nom de l’application : {}", applicationName);
 log.info("Profil actif : default");
-  log.info("Port du serveur : 8080");
+   log.info("Port du serveur : 8080");
   }
  }
