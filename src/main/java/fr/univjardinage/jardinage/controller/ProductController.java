@@ -8,16 +8,21 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import    lombok.RequiredArgsConstructor;
 import    lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Slf4j
@@ -84,9 +89,20 @@ public class ProductController{
      * Cree un nouveau produit
      */
     @PostMapping
-    public ResponseEntity<ProductDTO> createProduct(
-            @RequestBody CreateProductDTO createDto){
+    public ResponseEntity<?> createProduct(
+            @Valid @RequestBody CreateProductDTO createDto, BindingResult bindingResult){
+
         log.info("POST/api/v1/products - Creation d’un produit :{} ", createDto.getName());
+
+        if(bindingResult.hasErrors()){
+            Map<String, String> errors = new HashMap<>();
+            bindingResult.getAllErrors().forEach(error ->{
+                String fieldName = ((FieldError) error).getField();
+                String errorMessage = error.getDefaultMessage();
+                errors.put(fieldName, errorMessage);
+            });
+            return ResponseEntity.badRequest().body(errors);
+        }
         ProductDTO createdProduct = productService.createProduct(createDto);
 
         URI location = URI.create("/api/v1/products/" + createdProduct.getId());
