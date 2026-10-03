@@ -42,6 +42,10 @@ public class Product {
     @Column ( nullable = false , updatable = false )
     private LocalDateTime creationDate ;
 
+    @ManyToOne
+    @JoinColumn(name = "created_by_id")
+    private User createdBy;
+
     @PrePersist
     protected void onCreate () {
         if ( creationDate == null ) {
@@ -50,5 +54,13 @@ public class Product {
         if ( active == null ) {
             active = true ;
         }
+    }
+
+    public String getCreatedBy() {
+        return  createdBy == null ? null : createdBy.getUsername();
+    }
+
+    public String getDepartment() {
+        return createdBy == null ? null : createdBy.getDepartment();
     }
 }

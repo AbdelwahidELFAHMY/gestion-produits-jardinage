@@ -6,12 +6,16 @@ import fr.univjardinage.jardinage.dto.CreateProductDTO;
 import   fr.univjardinage.jardinage.dto.ProductDTO;
 import   fr.univjardinage.jardinage.entity.Product;
 import   fr.univjardinage.jardinage.entity.ProductCategory;
+import fr.univjardinage.jardinage.entity.User;
 import   fr.univjardinage.jardinage.exception.*;
 import   fr.univjardinage.jardinage.mapper.ProductMapper;
 import   fr.univjardinage.jardinage.repository.ProductRepository;
+import fr.univjardinage.jardinage.repository.UserRepository;
 import   fr.univjardinage.jardinage.service.ProductService;
 import   lombok.RequiredArgsConstructor;
 import   lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import   org.springframework.stereotype.Service;
 import   org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +31,7 @@ public class ProductServiceImpl implements ProductService{
 
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private final UserRepository userRepository;
 
     private static final Integer LOW_STOCK_THRESHOLD = 10;
     private static final BigDecimal MAX_DISCOUNT = new BigDecimal("50");
@@ -46,7 +51,17 @@ public class ProductServiceImpl implements ProductService{
         validatePrice(createDto.getPrice());
 
 // Conversion et sauvegarde
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        User owner = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new IllegalStateException(
+                "Utilisateur authentifié introuvable : "
+                        + authentication.getName()
+        ));
+
         Product product = productMapper.toEntityFromCreate(createDto);
+        product.setCreatedBy(owner);
         Product savedProduct = productRepository.save(product);
 
         log.info(" Produit cree avec succes - ID :{} ", savedProduct.getId());
@@ -186,6 +201,11 @@ public class ProductServiceImpl implements ProductService{
 
         Product updatedProduct = productRepository.save(product);
         return productMapper.toDto(updatedProduct);
+    }
+
+    @Override
+    public ProductDTO getProductWithDepartmentCheck(Long id) {
+        return null;
     }
 
     @Override

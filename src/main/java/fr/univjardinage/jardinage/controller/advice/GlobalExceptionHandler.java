@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.springframework.security.authorization.AuthorizationDeniedException;
 
 @Slf4j
 @RestControllerAdvice
@@ -114,5 +115,20 @@ public class GlobalExceptionHandler{
         body.put("message", message);
         body.put("path", request.getDescription(false).replace(" uri = ", " "));
         return body;
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<Object> handleAuthorizationDenied(
+            AuthorizationDeniedException ex,
+            WebRequest request) {
+
+        Map<String, Object> body = createErrorBody(
+                HttpStatus.FORBIDDEN,
+                "Accès interdit",
+                "ACCESS_DENIED",
+                request
+        );
+
+        return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
     }
 }

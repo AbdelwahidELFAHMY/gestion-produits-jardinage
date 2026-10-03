@@ -4,9 +4,13 @@ import   fr.univjardinage.jardinage.dto.CreateProductDTO;
 import   fr.univjardinage.jardinage.dto.ProductDTO;
 import   fr.univjardinage.jardinage.entity.Product;
 import   fr.univjardinage.jardinage.entity.ProductCategory;
+import fr.univjardinage.jardinage.entity.Role;
+import fr.univjardinage.jardinage.entity.User;
 import   fr.univjardinage.jardinage.exception.*;
 import   fr.univjardinage.jardinage.mapper.ProductMapper;
 import   fr.univjardinage.jardinage.repository.ProductRepository;
+import fr.univjardinage.jardinage.repository.UserRepository;
+import org.junit.jupiter.api.AfterEach;
 import   org.junit.jupiter.api.BeforeEach;
 import   org.junit.jupiter.api.DisplayName;
 import   org.junit.jupiter.api.Test;
@@ -14,9 +18,15 @@ import   org.junit.jupiter.api.extension.ExtendWith;
 import   org.mockito.InjectMocks;
 import   org.mockito.Mock;
 import   org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.List;
+import java.util.Optional;
 
 import java.math.BigDecimal;
-import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -31,7 +41,8 @@ class ProductServiceImplTest{
 
     @Mock
     private ProductMapper productMapper;
-
+    @Mock
+    private UserRepository userRepository;
 
     @InjectMocks
     private ProductServiceImpl productService;
@@ -65,6 +76,29 @@ class ProductServiceImplTest{
                 .price(new BigDecimal("15.99"))
                 .stock(50)
                 .build();
+
+        User authenticatedUser = User.builder()
+                .username("user1")
+                .password("password")
+                .email("user1@test.com")
+                .roles(Set.of(Role.ROLE_VENDOR))
+                .enabled(true)
+                .department("DEFAULT")
+                .build();
+
+
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(
+                        "user1",
+                        null,
+                        List.of(new SimpleGrantedAuthority("ROLE_VENDOR"))
+                )
+        );
+    }
+
+    @AfterEach
+    void tearDown() {
+        SecurityContextHolder.clearContext();
     }
 
     @Test
@@ -78,9 +112,20 @@ class ProductServiceImplTest{
         when(productMapper.toDto(any())).thenReturn(productDTO);
 
 // When
+        User authenticatedUser = User.builder()
+                .username("user1")
+                .password("password")
+                .email("user1@test.com")
+                .roles(Set.of(Role.ROLE_VENDOR))
+                .enabled(true)
+                .department("DEFAULT")
+                .build();
+
+        when(userRepository.findByUsername("user1"))
+                .thenReturn(Optional.of(authenticatedUser));
+
         ProductDTO result = productService.createProduct(
                 createProductDTO);
-
 // Then
         assertThat(result).isNotNull();
         assertThat(result.getName()).isEqualTo(" Rosier ");
