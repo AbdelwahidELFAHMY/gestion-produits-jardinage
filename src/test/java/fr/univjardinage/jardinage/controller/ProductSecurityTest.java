@@ -1,6 +1,6 @@
 package fr.univjardinage.jardinage.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import fr.univjardinage.jardinage.dto.CreateProductDTO;
 import fr.univjardinage.jardinage.entity.Product;
 import fr.univjardinage.jardinage.entity.ProductCategory;
@@ -41,7 +41,8 @@ class ProductSecurityTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {

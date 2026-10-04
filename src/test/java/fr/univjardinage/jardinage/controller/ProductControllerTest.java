@@ -1,6 +1,7 @@
 package fr.univjardinage.jardinage.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+
 import fr.univjardinage.jardinage.dto.CreateProductDTO;
 import fr.univjardinage.jardinage.dto.ProductDTO;
 import fr.univjardinage.jardinage.entity.ProductCategory;
@@ -41,7 +42,8 @@ class ProductControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @MockitoBean
     private ProductService productService;
