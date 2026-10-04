@@ -1,0 +1,52 @@
+{
+  "properties": [
+    {
+      "name": "jardinage.audit.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Active ou désactive l'audit des opérations.",
+      "defaultValue": true
+    },
+    {
+      "name": "jardinage.audit.export-format",
+      "type": "fr.univjardinage.audit.autoconfigure.AuditProperties$ExportFormat",
+      "description": "Format d'export des logs d'audit.",
+      "defaultValue": "JSON"
+    },
+    {
+      "name": "jardinage.audit.log-directory",
+      "type": "java.lang.String",
+      "description": "Répertoire de stockage des logs d'audit.",
+      "defaultValue": "./audit-logs"
+    },
+    {
+      "name": "jardinage.audit.async",
+      "type": "java.lang.Boolean",
+      "description": "Active l'audit asynchrone.",
+      "defaultValue": false
+    },
+    {
+      "name": "jardinage.audit.batch-size",
+      "type": "java.lang.Integer",
+      "description": "Nombre d'événements en cache avant flush.",
+      "defaultValue": 100
+    },
+    {
+      "name": "jardinage.audit.retention-days",
+      "type": "java.lang.Integer",
+      "description": "Durée de rétention des logs en jours.",
+      "defaultValue": 90
+    },
+    {
+      "name": "jardinage.audit.include-user-details",
+      "type": "java.lang.Boolean",
+      "description": "Inclut les détails de l'utilisateur dans les événements d'audit.",
+      "defaultValue": true
+    },
+    {
+      "name": "jardinage.audit.include-stack-trace",
+      "type": "java.lang.Boolean",
+      "description": "Inclut la stack trace dans les événements d'audit.",
+      "defaultValue": false
+    }
+  ]
+}
