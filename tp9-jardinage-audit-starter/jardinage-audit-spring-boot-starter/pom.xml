@@ -14,6 +14,7 @@
 
     <artifactId>jardinage-audit-spring-boot-starter</artifactId>
     <name>Jardinage Audit Spring Boot Starter</name>
+    <description>Starter Spring Boot pour activer l'audit Jardinage</description>
 
     <dependencies>
         <dependency>
